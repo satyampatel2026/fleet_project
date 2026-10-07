@@ -1,7 +1,7 @@
 {
   "name": "partner-service",
   "version": "1.0.0",
-  "description": "",
+  "description":"Partner and KYC service for Fleet Management",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

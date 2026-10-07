@@ -1,24 +1,82 @@
 require("dotenv").config();
 
-const app = require("./src/app");
-const connection = require("./src/config/db");
+const express = require("express");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const path = require("path");
 
-const PORT = process.env.PORT || 5002;
+const partnerKycRouter = require(
+  "./src/routes/partnerKycRoute"
+);
 
-async function startServer() {
-    try {
-        const db = await connection.getConnection();
+const adminPartnerRouter = require(
+  "./src/routes/adminPartnerRoute"
+);
 
-        console.log("MySQL connected successfully");
-        db.release();
+const adminKycRouter = require(
+  "./src/routes/adminKycRoute"
+);
 
-        app.listen(PORT, () => {
-            console.log(`Partner Service running on port ${PORT}`);
-        });
-    } catch (error) {
-        console.error("Database connection failed:", error.message);
-        process.exit(1);
-    }
-}
+const app = express();
 
-startServer();
+const PORT = process.env.SERVER_PORT || 5003;
+
+
+// ================= MIDDLEWARES =================
+
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:5174",
+    ],
+    credentials: true,
+  })
+);
+
+app.use(express.json());
+
+app.use(cookieParser());
+
+
+// ================= KYC FILES =================
+
+// Uploaded PAN / Aadhaar / GST documents
+app.use(
+  "/myfiles",
+  express.static(
+    path.join(__dirname, "myfiles")
+  )
+);
+
+
+// ================= ROUTES =================
+
+// Partner KYC
+app.use("/", partnerKycRouter);
+
+// Admin Partner Management
+app.use("/", adminPartnerRouter);
+
+// Admin KYC Management
+app.use("/", adminKycRouter);
+
+
+// ================= HEALTH CHECK =================
+
+app.get("/health", (req, res) => {
+  return res.status(200).json({
+    success: true,
+    service: "partner-service",
+    message: "Partner service is running",
+  });
+});
+
+
+// ================= SERVER =================
+
+app.listen(PORT, () => {
+  console.log(
+    `Partner service is running on port ${PORT}`
+  );
+});

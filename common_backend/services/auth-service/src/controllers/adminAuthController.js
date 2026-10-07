@@ -1,11 +1,11 @@
-const connection = require("../config/db");
+const connection = require("../model/db");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
-  // Check email and password
+  // Email and password required
   if (!email || !password) {
     return res.status(400).json({
       success: false,
@@ -18,6 +18,7 @@ const loginUser = async (req, res) => {
       u.user_id,
       u.email,
       u.password,
+      u.status,
       r.role_name
     FROM users u
     LEFT JOIN role_assign ra 
@@ -39,73 +40,71 @@ const loginUser = async (req, res) => {
 
     const user = data[0];
 
-    bcrypt.compare(password, user.password, (bcryptError, result) => {
-      if (bcryptError) {
-        console.error(bcryptError);
-
-        return res.status(500).json({
-          success: false,
-          message: "Password verification error",
-        });
-      }
-
-      // Password galat
-      if (!result) {
-        return res.status(401).json({
-          success: false,
-          message: "Password not match",
-        });
-      }
-
-      // Role check
-      if (user.role_name !== "Admin") {
-        return res.status(403).json({
-          success: false,
-          message: "Only Admin can login",
-        });
-      }
-
-      // JWT token create
-      const token = jwt.sign(
-        {
-          id: user.user_id,
-          role: user.role_name,
-        },
-        process.env.JWT_SECRET || "ps",
-        {
-          expiresIn: "1d",
-        }
-      );
-
-      console.log("TOKEN CREATED:", token);
-
-      // Token ko cookie me store karo
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: false, // production me true
-        sameSite: "lax",
-        maxAge: 24 * 60 * 60 * 1000,
+    // Inactive user login block
+    if (user.status !== "active") {
+      return res.status(403).json({
+        success: false,
+        message: "User account is inactive",
       });
+    }
 
-      // Success response
-      return res.status(200).json({
-        success: true,
-        message: "Login successful",
-        user: {
-          id: user.user_id,
-          role: user.role_name,
-        },
+    const passwordMatch = await bcrypt.compare(
+      password,
+      user.password
+    );
+
+    if (!passwordMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Password not match",
       });
+    }
+
+    // Currently only Admin login
+    if (user.role_name !== "Admin") {
+      return res.status(403).json({
+        success: false,
+        message: "Only Admin can login",
+      });
+    }
+
+    const token = jwt.sign(
+      {
+        id: user.user_id,
+        type: "admin",
+        role: user.role_name,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+      }
+    );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      maxAge: 24 * 60 * 60 * 1000,
     });
-  } catch (err) {
-    console.error("DATABASE ERROR:", err);
+
+    return res.status(200).json({
+      success: true,
+      message: "Login successful",
+      user: {
+        id: user.user_id,
+        role: user.role_name,
+      },
+    });
+  } catch (error) {
+    console.error("Admin Login Error:", error);
 
     return res.status(500).json({
       success: false,
       message: "Server error",
-      error: err.message,
     });
   }
 };
 
-module.exports = { loginUser };
+module.exports = {
+  loginUser,
+};

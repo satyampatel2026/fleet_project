@@ -1,41 +1,55 @@
 const express = require("express");
 
-const partnerkycRouter = express.Router();
+const partnerKycRouter = express.Router();
 
-const upload = require("../middlewares/uploadKyc");
-const authMiddleware = require("../middlewares/authMiddleware");
+const partnerAuthMiddleware = require(
+  "../middlewares/partnerAuthMiddleware"
+);
+
+const upload = require(
+  "../middlewares/uploadKyc"
+);
 
 const {
-    submitKyc,
-    getKycByPartnerId
-} = require("../controllers/partnerKycController");
-
-
-partnerkycRouter.post(
-    "/submit-kyc",
-    authMiddleware,
-    upload.fields([
-        {
-            name: "pan_document",
-            maxCount: 1
-        },
-        {
-            name: "aadhaar_document",
-            maxCount: 1
-        },
-        {
-            name: "gst_document",
-            maxCount: 1
-        }
-    ]),
-    submitKyc
+  submitKyc,
+  getKycByPartnerId,
+} = require(
+  "../controllers/partnerKycController"
 );
 
 
-partnerkycRouter.get(
-    "/kyc",
-    authMiddleware,
-    getKycByPartnerId
+// ================= SUBMIT / UPDATE KYC =================
+
+partnerKycRouter.post(
+  "/api/partner/kyc",
+  partnerAuthMiddleware,
+
+  upload.fields([
+    {
+      name: "pan_document",
+      maxCount: 1,
+    },
+    {
+      name: "aadhaar_document",
+      maxCount: 1,
+    },
+    {
+      name: "gst_document",
+      maxCount: 1,
+    },
+  ]),
+
+  submitKyc
 );
 
-module.exports = partnerkycRouter;
+
+// ================= GET PARTNER KYC =================
+
+partnerKycRouter.get(
+  "/api/partner/kyc",
+  partnerAuthMiddleware,
+  getKycByPartnerId
+);
+
+
+module.exports = partnerKycRouter;

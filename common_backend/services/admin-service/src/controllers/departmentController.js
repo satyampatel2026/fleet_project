@@ -1,5 +1,7 @@
-const connection = require("../config/db");
+const connection = require("../model/db");
 
+
+// ================= GET DEPARTMENTS =================
 
 const getDept = async (req, res) => {
   try {
@@ -9,18 +11,20 @@ const getDept = async (req, res) => {
 
     const [result] = await connection.query(query);
 
-    return res.send(result);
+    return res.status(200).json(result);
 
   } catch (error) {
     console.error("Get Department Error:", error);
 
-    return res.status(500).send({
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
   }
 };
 
+
+// ================= ADD DEPARTMENT =================
 
 const postDept = async (req, res) => {
   const { department_name } = req.body;
@@ -36,12 +40,12 @@ const postDept = async (req, res) => {
       [department_name]
     );
 
-    return res.send(result);
+    return res.status(201).json(result);
 
   } catch (error) {
     console.error("Add Department Error:", error);
 
-    return res.status(500).send({
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
@@ -49,6 +53,7 @@ const postDept = async (req, res) => {
 };
 
 
+// ================= UPDATE DEPARTMENT =================
 
 const updateDept = async (req, res) => {
   const { department_name } = req.body;
@@ -63,21 +68,26 @@ const updateDept = async (req, res) => {
 
     const [result] = await connection.query(
       query,
-      [department_name, department_id]
+      [
+        department_name,
+        department_id,
+      ]
     );
 
-    return res.send(result);
+    return res.status(200).json(result);
 
   } catch (error) {
     console.error("Update Department Error:", error);
 
-    return res.status(500).send({
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
   }
 };
 
+
+// ================= DELETE DEPARTMENT =================
 
 const deleteDept = async (req, res) => {
   const department_id = req.query.department_id;
@@ -93,12 +103,12 @@ const deleteDept = async (req, res) => {
       [department_id]
     );
 
-    return res.send(result);
+    return res.status(200).json(result);
 
   } catch (error) {
     console.error("Delete Department Error:", error);
 
-    return res.status(500).send({
+    return res.status(500).json({
       success: false,
       message: error.message,
     });

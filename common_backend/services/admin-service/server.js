@@ -4,12 +4,14 @@ const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 
-const adminAuthRouter = require("./src/routes/adminAuthRoute");
-const partnerAuthRouter = require("./src/routes/partnerAuthRoute");
+const userRouter = require("./src/routes/userRoute");
+const departmentRouter = require("./src/routes/departmentRoute");
+const roleRouter = require("./src/routes/roleRoute");
+const dashboardRouter = require("./src/routes/dashboardRoute");
 
 const app = express();
 
-const PORT = process.env.SERVER_PORT || 5001;
+const PORT = process.env.SERVER_PORT || 5002;
 
 
 // ================= MIDDLEWARES =================
@@ -31,9 +33,13 @@ app.use(cookieParser());
 
 // ================= ROUTES =================
 
-app.use("/", adminAuthRouter);
+app.use("/", userRouter);
 
-app.use("/", partnerAuthRouter);
+app.use("/", departmentRouter);
+
+app.use("/", roleRouter);
+
+app.use("/", dashboardRouter);
 
 
 // ================= HEALTH CHECK =================
@@ -41,8 +47,8 @@ app.use("/", partnerAuthRouter);
 app.get("/health", (req, res) => {
   return res.status(200).json({
     success: true,
-    service: "auth-service",
-    message: "Auth service is running",
+    service: "admin-service",
+    message: "Admin service is running",
   });
 });
 
@@ -51,6 +57,6 @@ app.get("/health", (req, res) => {
 
 app.listen(PORT, () => {
   console.log(
-    `Auth service is running on port ${PORT}`
+    `Admin service is running on port ${PORT}`
   );
 });

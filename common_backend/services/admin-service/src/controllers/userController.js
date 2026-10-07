@@ -1,20 +1,23 @@
-const connection = require("../config/db");
+const connection = require("../model/db");
 const bcrypt = require("bcrypt");
 
-// ================= USERS =================
 
-// Total Users
+// ================= TOTAL USERS =================
+
 const totalUsers = async (req, res) => {
   try {
-    const query = `SELECT COUNT(*) AS total_users FROM users`;
+    const query = `
+      SELECT COUNT(*) AS total_users
+      FROM users
+    `;
 
     const [result] = await connection.query(query);
 
-    return res.send(result);
+    return res.status(200).json(result);
   } catch (error) {
     console.error("Total Users Error:", error);
 
-    return res.status(500).send({
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
@@ -34,12 +37,14 @@ const postUser = async (req, res) => {
   } = req.body;
 
   try {
-    // Password hash
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(
+      password,
+      10
+    );
 
     const query = `
-      INSERT INTO users 
-      SET 
+      INSERT INTO users
+      SET
         full_name = UPPER(?),
         email = ?,
         mobile = ?,
@@ -55,14 +60,16 @@ const postUser = async (req, res) => {
       department_id,
     ];
 
-    const [result] = await connection.query(query, data);
+    const [result] = await connection.query(
+      query,
+      data
+    );
 
-    return res.send(result);
-
+    return res.status(201).json(result);
   } catch (error) {
     console.error("Add User Error:", error);
 
-    return res.status(500).send({
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
@@ -75,22 +82,23 @@ const postUser = async (req, res) => {
 const getUser = async (req, res) => {
   try {
     const query = `
-      SELECT 
+      SELECT
         users.*,
         departments.department_name
       FROM users
+
       INNER JOIN departments
-        ON users.department_id = departments.department_id
+        ON users.department_id =
+           departments.department_id
     `;
 
     const [result] = await connection.query(query);
 
-    return res.send(result);
-
+    return res.status(200).json(result);
   } catch (error) {
     console.error("Get Users Error:", error);
 
-    return res.status(500).send({
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
@@ -112,8 +120,8 @@ const updateUser = async (req, res) => {
 
   try {
     const query = `
-      UPDATE users 
-      SET 
+      UPDATE users
+      SET
         full_name = UPPER(?),
         email = ?,
         department_id = ?,
@@ -129,14 +137,16 @@ const updateUser = async (req, res) => {
       user_id,
     ];
 
-    const [result] = await connection.query(query, data);
+    const [result] = await connection.query(
+      query,
+      data
+    );
 
-    return res.send(result);
-
+    return res.status(200).json(result);
   } catch (error) {
     console.error("Update User Error:", error);
 
-    return res.status(500).send({
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
@@ -149,11 +159,9 @@ const updateUser = async (req, res) => {
 const deleteUser = async (req, res) => {
   const user_id = req.query.user_id;
 
-  console.log("Delete ID:", user_id);
-
   try {
     const query = `
-      DELETE FROM users 
+      DELETE FROM users
       WHERE user_id = ?
     `;
 
@@ -162,21 +170,16 @@ const deleteUser = async (req, res) => {
       [user_id]
     );
 
-    console.log("Delete Result:", result);
-
-    return res.send(result);
-
+    return res.status(200).json(result);
   } catch (error) {
     console.error("Delete User Error:", error);
 
-    return res.status(500).send({
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
   }
 };
-
-
 
 
 module.exports = {
