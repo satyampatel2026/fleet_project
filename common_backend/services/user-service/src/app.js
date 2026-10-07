@@ -4,6 +4,7 @@ const cors = require("cors");
 const usersRouter = require("./routes/userRoute");
 const departmentRouter = require("./routes/departmentRoute");
 const rolesRouter = require("./routes/rolesRoute");
+const dashboardRouter=require("./routes/dashboardRoute");
 
 const app = express();
 
@@ -21,5 +22,6 @@ app.get("/health", (req, res) => {
 app.use("/", usersRouter);
 app.use("/", departmentRouter);
 app.use("/", rolesRouter);
+app.use("/",dashboardRouter);
 
 module.exports = app;
