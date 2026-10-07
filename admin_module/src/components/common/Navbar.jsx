@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FiBell,
   FiCalendar,
@@ -19,6 +20,30 @@ export default function Navbar({ onMenuClick }) {
     year: "numeric",
   }).format(new Date());
 
+   const navigate = useNavigate();
+  const handleLogout = async () => {
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/logout",
+      {
+        method: "POST",
+        credentials: "include",
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.ok && data.success) {
+      alert(data.message);
+      navigate("/admin/adminlogin");
+    } else {
+      alert(data.message || "Logout failed");
+    }
+  } catch (error) {
+    console.error("Logout Error:", error);
+    alert("Logout failed");
+  }
+};
   return (
     <header className="sticky top-0 z-40 h-16 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur dark:border-slate-700 dark:bg-slate-900/95">
       <div className="flex h-full items-center justify-between gap-4 px-4 lg:px-6">
@@ -141,7 +166,7 @@ export default function Navbar({ onMenuClick }) {
 
                 <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
 
-                <button
+                <button onClick={handleLogout}
                   type="button"
                   className="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-600 transition hover:bg-red-50 dark:hover:bg-red-950/30"
                 >

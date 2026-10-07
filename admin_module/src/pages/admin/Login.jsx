@@ -19,7 +19,7 @@ function Login() {
     try {
       setLoading(true);
 
-      const response = await fetch("http://localhost:5000/api/loginuser", {
+      const response = await fetch("http://localhost:5000/api/admin/loginuser", {
         method: "POST",
 
         headers: {
@@ -65,8 +65,7 @@ function Login() {
             </h1>
 
             <p className="text-slate-300 mb-6">
-              Manage your vehicles, drivers, bookings and trips
-              from one simple dashboard.
+              Admin Users Login Only
             </p>
 
             <div className="border-t border-slate-600 pt-5">

@@ -47,7 +47,7 @@ const postUser = async (req, res) => {
         department_id = ?
     `;
 
-    const data = [
+    const data = [  
       full_name,
       email,
       mobile,

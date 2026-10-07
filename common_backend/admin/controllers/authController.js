@@ -77,8 +77,6 @@ const loginUser = async (req, res) => {
         }
       );
 
-      console.log("TOKEN CREATED:", token);
-
       // Token ko cookie me store karo
       res.cookie("token", token, {
         httpOnly: true,
@@ -108,4 +106,17 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { loginUser };
+const logoutUser = (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+  });
+
+  return res.status(200).json({
+    success: true,
+    message: "Logout successful",
+  });
+};
+
+module.exports = { loginUser,logoutUser };
