@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { registerPartner } from "../services/partnerService";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Swal from "sweetalert2";
@@ -9,6 +9,7 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+   const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
       partnername: "",
@@ -69,6 +70,7 @@ const Register = () => {
     });
 
     resetForm();
+    navigate("/login", { replace: true });
 
   } catch (error) {
     console.error("Registration Error:", error);

@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5000/api/departments";
+const API_URL = "http://localhost:5002/api/admin/departments";
 
 async function request(url, options = {}) {
   const response = await fetch(url, {
@@ -43,7 +43,7 @@ export async function updateDepartment(id, name) {
   return request(
     `${API_URL}?department_id=${id}`,
     {
-      method: "PATCH",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },

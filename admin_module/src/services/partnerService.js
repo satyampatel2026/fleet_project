@@ -1,132 +1,64 @@
-const API_URL = "http://localhost:5000/api";
+
+const API_URL = "http://localhost:5003/api/admin";
+
+// Common API request function
+async function request(endpoint, options = {}) {
+  const response = await fetch(`${API_URL}${endpoint}`, {
+    ...options,
+    credentials: "include",
+  });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok || data.success === false) {
+    throw new Error(
+      data.message || "Something went wrong"
+    );
+  }
+
+  return data;
+}
+
+// ================= PARTNERS =================
 
 export async function getPartners() {
-  const response = await fetch(`${API_URL}/partners`);
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(
-      data.message || "Failed to fetch partners"
-    );
-  }
-
-  return data;
+  return request("/partners");
 }
 
-
-export async function updatePartnerStatus(
-  partnerId,
-  status
-) {
-  const response = await fetch(
-    `${API_URL}/partners/${partnerId}/status`,
-    {
-      method: "PATCH",
-
-      headers: {
-        "Content-Type": "application/json",
-      },
-
-      body: JSON.stringify({
-        status,
-      }),
-    }
-  );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(
-      data.message ||
-        "Failed to update partner status"
-    );
-  }
-
-  return data;
+export async function updatePartnerStatus(partnerId, status) {
+  return request(`/partners/${partnerId}/status`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ status }),
+  });
 }
 
+// ================= ADMIN KYC =================
 
 export async function getKycList() {
-  const response = await fetch(
-    `${API_URL}/partnerkyc`
-  );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(
-      data.message || "Failed to fetch KYC records"
-    );
-  }
-
-  return data;
+  return request("/kyc");
 }
 
-
 export async function getKycDetails(kycId) {
-  const response = await fetch(
-    `${API_URL}/kyc/${kycId}`
-  );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(
-      data.message ||
-        "Failed to fetch KYC details"
-    );
-  }
-
-  return data;
+  return request(`/kyc/${kycId}`);
 }
 
 export async function verifyKyc(kycId) {
-  const response = await fetch(
-    `${API_URL}/kyc/${kycId}/verify`,
-    {
-      method: "PATCH",
-    }
-  );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(
-      data.message ||
-        "Failed to verify KYC"
-    );
-  }
-
-  return data;
+  return request(`/kyc/${kycId}/verify`, {
+    method: "PATCH",
+  });
 }
 
-
-export async function rejectKyc(
-  kycId,
-  rejectionReason
-) {
-  const response = await fetch(
-    `${API_URL}/kyc/${kycId}/reject`,
-    {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        rejectionReason,
-      }),
-    }
-  );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(
-      data.message ||
-        "Failed to reject KYC"
-    );
-  }
-
-  return data;
+export async function rejectKyc(kycId, rejectionReason) {
+  return request(`/kyc/${kycId}/reject`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      rejectionReason,
+    }),
+  });
 }

@@ -21,10 +21,10 @@ export default function Navbar({ onMenuClick }) {
   }).format(new Date());
 
    const navigate = useNavigate();
-  const handleLogout = async () => {
+const handleLogout = async () => {
   try {
     const response = await fetch(
-      "http://localhost:5000/api/logout",
+      "http://localhost:5001/api/admin/logout",
       {
         method: "POST",
         credentials: "include",
@@ -34,8 +34,8 @@ export default function Navbar({ onMenuClick }) {
     const data = await response.json();
 
     if (response.ok && data.success) {
-      alert(data.message);
-      navigate("/admin/adminlogin");
+      setProfileOpen(false);
+      navigate("/admin/adminlogin", { replace: true });
     } else {
       alert(data.message || "Logout failed");
     }

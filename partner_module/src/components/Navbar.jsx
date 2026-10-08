@@ -1,15 +1,35 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { logoutPartner } from "../services/partnerService";
 import {
   Menu,
   Search,
   Bell,
   MessageSquare,
   ChevronDown,
-  Plus,
+  Plus,LogOut
 } from "lucide-react";
 
 const Navbar = ({ onMenuClick }) => {
   const [notifOpen, setNotifOpen] = useState(false);
+    const [profileOpen, setProfileOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      setLoggingOut(true);
+
+      await logoutPartner();
+
+      navigate("/login", { replace: true });
+    } catch (error) {
+      console.error("Logout failed:", error);
+      alert(error.message || "Logout failed. Please try again.");
+    } finally {
+      setLoggingOut(false);
+    }
+  };
 
   return (
     <header className="sticky top-0 z-30 h-14 bg-white border-b border-slate-200">
@@ -121,20 +141,42 @@ const Navbar = ({ onMenuClick }) => {
           <div className="hidden md:block h-5 w-px bg-slate-200 mx-2" />
 
           {/* PROFILE */}
-          <button className="flex items-center gap-1.5 px-1 py-1 rounded-md hover:bg-slate-50">
-            <div className="w-7 h-7 rounded-md bg-blue-600 flex items-center justify-center text-white text-[9px] font-semibold">
-              SM
-            </div>
-            <div className="hidden lg:block text-left">
-              <p className="text-[11px] font-semibold text-slate-700 leading-none">
-                Sharma Motors
-              </p>
-              <p className="text-[9px] text-slate-400 mt-1 leading-none">
-                Fleet Partner
-              </p>
-            </div>
-            <ChevronDown className="hidden md:block w-3 h-3 text-slate-400" />
-          </button>
+<div className="relative">
+  <button
+    type="button"
+    onClick={() => setProfileOpen(!profileOpen)}
+    className="flex items-center gap-1.5 px-1 py-1 rounded-md hover:bg-slate-50"
+  >
+    <div className="w-7 h-7 rounded-md bg-blue-600 flex items-center justify-center text-white text-[9px] font-semibold">
+      SM
+    </div>
+
+    <div className="hidden lg:block text-left">
+      <p className="text-[11px] font-semibold text-slate-700 leading-none">
+        Sharma Motors
+      </p>
+      <p className="text-[9px] text-slate-400 mt-1 leading-none">
+        Fleet Partner
+      </p>
+    </div>
+
+    <ChevronDown className="hidden md:block w-3 h-3 text-slate-400" />
+  </button>
+
+  {profileOpen && (
+    <div className="absolute right-0 top-10 w-44 bg-white border border-slate-200 rounded-lg shadow-lg z-50">
+      <button
+        type="button"
+        onClick={handleLogout}
+        disabled={loggingOut}
+        className="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-600 hover:bg-red-50 disabled:opacity-50"
+      >
+        <LogOut className="w-4 h-4" />
+        {loggingOut ? "Logging out..." : "Logout"}
+      </button>
+    </div>
+  )}
+</div>
         </div>
       </div>
     </header>

@@ -1,5 +1,5 @@
-const USERS_API_URL = "http://localhost:5000/api/users/total";
-const PARTNERS_API_URL = "http://localhost:5000/api/partners/total";
+const USERS_API_URL = "http://localhost:5002/api/admin/users/total";
+const PARTNERS_API_URL = "http://localhost:5003/api/admin/partners/total";
 
 export async function getDashboardData() {
   const [usersResponse, partnersResponse] = await Promise.all([
@@ -29,7 +29,7 @@ export async function getDashboardData() {
 
   return {
     users: Number(usersData[0]?.total_users || 0),
-    partners: Number(partnersData[0]?.total_partners || 0),
+    partners: Number(partnersData.data?.total_partners || 0),
 
     // Future APIs
     vehicles: 0,

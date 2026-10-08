@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:5000/api";
+const BASE_URL = "http://localhost:5002/api/admin";
 
 async function request(url, options = {}) {
   const response = await fetch(url, {
@@ -43,7 +43,7 @@ export async function updateUser(userId, userData) {
   return request(
     `${BASE_URL}/users?user_id=${userId}`,
     {
-      method: "PATCH",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
@@ -85,7 +85,7 @@ export async function getRoles() {
 
 export async function getUserRoles(userId) {
   const data = await request(
-    `${BASE_URL}/userrole?user_id=${userId}`
+    `${BASE_URL}/user-roles?user_id=${userId}`
   );
 
   return Array.isArray(data)
@@ -94,7 +94,7 @@ export async function getUserRoles(userId) {
 }
 
 export async function assignUserRole(userId, roleId) {
-  return request(`${BASE_URL}/userrole`, {
+  return request(`${BASE_URL}/user-roles`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -111,7 +111,7 @@ export async function removeUserRole(
   roleId
 ) {
   return request(
-    `${BASE_URL}/userrole?user_id=${userId}&role_id=${roleId}`,
+    `${BASE_URL}/user-roles?user_id=${userId}&role_id=${roleId}`,
     {
       method: "DELETE",
     }

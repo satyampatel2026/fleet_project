@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5000/api/roles";
+const API_URL = "http://localhost:5002/api/admin/roles";
 
 async function request(url, options = {}) {
   const response = await fetch(url, {
@@ -41,7 +41,7 @@ export async function addRole(roleName) {
 
 export async function updateRole(id, roleName) {
   return request(`${API_URL}?role_id=${id}`, {
-    method: "PATCH",
+    method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },

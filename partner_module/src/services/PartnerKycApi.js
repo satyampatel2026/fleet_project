@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5000/api";
+const API_URL = "http://localhost:5003/api/partner";
 
 
 // ==========================================
@@ -46,7 +46,7 @@ export const getPartnerKyc = async () => {
 export const submitPartnerKyc = async (formData) => {
 
     const response = await fetch(
-        `${API_URL}/submit-kyc`,
+        `${API_URL}/kyc`,
         {
             method: "POST",
 

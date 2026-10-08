@@ -3,7 +3,7 @@ const express = require("express");
 const adminAuthRouter = express.Router();
 
 const {
-  loginUser,
+  loginUser,logoutUser
 } = require("../controllers/adminAuthController");
 
 const authMiddleware = require("../middlewares/authMiddleware");
@@ -15,6 +15,10 @@ adminAuthRouter.post(
   loginUser
 );
 
+adminAuthRouter.post(
+  "/api/admin/logout",
+  logoutUser
+);
 
 // Admin authentication check
 adminAuthRouter.get(

@@ -12,7 +12,7 @@ import KycDetailItem from "./KycDetailItem";
 import KycDocumentCard from "./KycDocumentCard";
 import KycRejectModal from "./KycRejectModal";
 
-const BACKEND_URL = "http://localhost:5000";
+const BACKEND_URL = "http://localhost:5003";
 
 export default function KycReview({
   kycId,

@@ -1,4 +1,5 @@
-const BASE_URL = "http://localhost:5000/api";
+
+const AUTH_URL = "http://localhost:5001/api/partner";
 
 async function request(url, options = {}) {
   const response = await fetch(url, {
@@ -8,7 +9,7 @@ async function request(url, options = {}) {
 
   const data = await response.json().catch(() => ({}));
 
-  if (!response.ok) {
+  if (!response.ok || data.success === false) {
     throw new Error(
       data.message ||
       data.error ||
@@ -19,10 +20,9 @@ async function request(url, options = {}) {
   return data;
 }
 
-
 // Register
 export async function registerPartner(partnerData) {
-  return request(`${BASE_URL}/register-partner`, {
+  return request(`${AUTH_URL}/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -31,8 +31,9 @@ export async function registerPartner(partnerData) {
   });
 }
 
+// Login
 export async function loginPartner(loginData) {
-  return request(`${BASE_URL}/login-partner`, {
+  return request(`${AUTH_URL}/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -43,13 +44,14 @@ export async function loginPartner(loginData) {
 
 // Logout
 export async function logoutPartner() {
-  return request(`${BASE_URL}/logout-partner`, {
+  return request(`${AUTH_URL}/logout`, {
     method: "POST",
   });
 }
 
+// Forgot Password - Send OTP
 export async function sendForgotPasswordOtp(email) {
-  return request(`${BASE_URL}/forgot-password`, {
+  return request(`${AUTH_URL}/forgot-password`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -60,45 +62,36 @@ export async function sendForgotPasswordOtp(email) {
 
 // Forgot Password - Verify OTP
 export async function verifyForgotPasswordOtp(email, otp) {
-  return request(`${BASE_URL}/verify-otp`, {
+  return request(`${AUTH_URL}/verify-otp`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      email,
-      otp,
-    }),
+    body: JSON.stringify({ email, otp }),
   });
 }
 
 // Forgot Password - Reset Password
 export async function resetForgotPassword(email, newPassword) {
-  return request(`${BASE_URL}/reset-password`, {
+  return request(`${AUTH_URL}/reset-password`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      email,
-      newPassword,
-    }),
+    body: JSON.stringify({ email, newPassword }),
   });
 }
 
+// Verify Partner Authentication
 export async function verifyAuth() {
-  try {
-    const res = await request(`${BASE_URL}/auth/verify?t=${Date.now()}`, {
+  return request(
+    `${AUTH_URL}/auth/verify?t=${Date.now()}`,
+    {
       method: "GET",
+      cache: "no-store",
       headers: {
-        "Accept": "application/json",
-        "Cache-Control": "no-cache"
-      }
-    });
-    console.log("API Verify Success:", res);
-    return res;
-  } catch (err) {
-    console.error("API Verify FAILED with error:", err.message); // Yahan exact pata chalega error kya hai
-    throw err;
-  }
+        Accept: "application/json",
+      },
+    }
+  );
 }

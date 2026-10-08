@@ -48,9 +48,7 @@ const Login = () => {
           confirmButtonColor: "#0b5ed7",timer: 1000,
           timerProgressBar: true,showConfirmButton: false
         });
-       setTimeout(() => {
-    navigate("/dashboard", { replace: true });
-}, 1000);
+       navigate("/dashboard", { replace: true });
 
       } catch (error) {
         console.error("Login error:", error);
